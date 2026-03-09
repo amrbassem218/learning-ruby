@@ -24,6 +24,12 @@ questions = [
   }),
 
   Question.new('Enter your age: ', 'age', lambda { |age|
+    # check if string is number
+    is_number = age.match?(/^\d+$/)
+    unless is_number
+      return { valid: false, error_message: 'Pls enter numbers only (fractions, periods, and commas are not allowed either)' }
+    end
+
     age = age.to_i
     is_valid = false
     error_message = ''
