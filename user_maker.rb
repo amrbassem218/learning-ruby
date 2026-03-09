@@ -3,7 +3,6 @@ puts '***************** User Maker*****************'
 Question = Struct.new(:title, :property_name, :format_check, :post_processing)
 User = Struct.new(:name, :age, :marital_status)
 user = User.new
-
 user_statuses = {
   's' => 'single',
   'm' => 'married',
@@ -11,16 +10,16 @@ user_statuses = {
 }
 questions = [
   Question.new('Enter your name: ', 'name', lambda { |name|
-    is_valid = false
+    is_imposter = false
     error_message = ''
     if name.empty?
       error_message = 'Field is empty. pls fill it :)'
     elsif name.length > 100
       error_message = 'Hey what kind of name is that? Pls choose a smaller name'
     else
-      is_valid = true
+      is_imposter = true
     end
-    { "valid": is_valid, "error_message": error_message }
+    { "valid": is_imposter, "error_message": error_message }
   }, lambda { |name|
     new_name = ''
     name.split(' ').each do |i|
@@ -37,21 +36,21 @@ questions = [
     end
 
     age = age.to_i
-    is_valid = false
+    is_imposter = false
     error_message = ''
     if age < 18
       error_message = 'You must be over 18 to use the platform'
     elsif age > 120
       error_message = "Hey Mr., not be rude but pls email me your diet. That's impressive age unfortunately we're not available for over 120yr olds"
     else
-      is_valid = true
+      is_imposter = true
     end
-    { "valid": is_valid, "error_message": error_message }
+    { "valid": is_imposter, "error_message": error_message }
   }),
 
   Question.new('Enter marital status ( (m) for married, (s) for single, (d) for diforced) (m/s/d): ', 'marital_status', lambda { |status|
-    is_valid = (user_statuses.include? status)
-    { "valid": is_valid, "error_message": !is_valid ? 'Please only type one of those 3 letters (m/s/d)' : '' }
+    is_imposter = (user_statuses.include? status)
+    { "valid": is_imposter, "error_message": !is_imposter ? 'Please only type one of those 3 letters (m/s/d)' : '' }
   }, lambda { |status|
        user_statuses[status].capitalize
      })
