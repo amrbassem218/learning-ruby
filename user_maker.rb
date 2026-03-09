@@ -1,6 +1,6 @@
 puts '***************** User Maker*****************'
 
-Question = Struct.new(:title, :property_name, :format_check)
+Question = Struct.new(:title, :property_name, :format_check, :post_processing)
 User = Struct.new(:name, :age, :marital_status)
 user = User.new
 
@@ -21,6 +21,12 @@ questions = [
       is_valid = true
     end
     { "valid": is_valid, "error_message": error_message }
+  }, lambda { |name|
+    new_name = ''
+    name.split(' ').each do |i|
+      new_name << i.capitalize
+    end
+    new_name
   }),
 
   Question.new('Enter your age: ', 'age', lambda { |age|
@@ -46,7 +52,9 @@ questions = [
   Question.new('Enter marital status ( (m) for married, (s) for single, (d) for diforced) (m/s/d): ', 'marital_status', lambda { |status|
     is_valid = (user_statuses.include? status)
     { "valid": is_valid, "error_message": !is_valid ? 'Please only type one of those 3 letters (m/s/d)' : '' }
-  })
+  }, lambda { |status|
+       user_statuses[status].capitalize
+     })
 ]
 
 def ask(prompt)
@@ -70,11 +78,8 @@ def get_valid_ans(ques)
 end
 questions.each do |ques|
   answer = get_valid_ans(ques)
-  user[ques.property_name] = if ques.property_name == 'marital_status'
-                               user_statuses[answer]
-                             else
-                               answer
-                             end
+  answer = ques.post_processing.call(answer) if ques.post_processing
+  user[ques.property_name] = answer
 end
 
 puts "\nUSER SUCESSFULLY CREATED!!!\n"
